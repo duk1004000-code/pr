@@ -160,44 +160,38 @@
     </div>
 
     <script>
-document.getElementById('loanConsultForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // 화면 새로고침 방지
+        document.getElementById('loanConsultForm').addEventListener('submit', function(e) {
+            e.preventDefault();
 
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerText = "전송 중입니다...";
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "전송 중입니다...";
 
-    // 질문자님의 최종 구글 앱 스크립트 URL 주소
-    const actionUrl = "https://script.google.com/macros/s/AKfycbxRk6WYfJKhf8FHLZiQMGTIV-ih0146clY_52lCQ_-KczNzEMrl7mKmXVgyZusDL4-x/exec"; 
-    
-    // 데이터를 인코딩하여 구글 서버로 안전하게 직렬화합니다.
-    const searchParams = new URLSearchParams(new FormData(this));
+            const actionUrl = "https://script.google.com/macros/s/AKfycbxRk6WYfJKhf8FHLZiQMGTIV-ih0146clY_52lCQ_-KczNzEMrl7mKmXVgyZusDL4-x/exec"; 
+            const searchParams = new URLSearchParams(new FormData(this));
 
-    // 구글 앱스크립트는 리다이렉트 응답을 반환하므로 요청 완료 자체를 성공으로 처리하는 구조가 가장 안전합니다.
-    fetch(actionUrl, {
-        method: 'POST',
-        body: searchParams,
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    })
-    .then(() => {
-        // 구글 시트 입력과 텔레그램 알림이 원활하게 오는 상태이므로 즉시 성공 팝업을 띄웁니다.
-        alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.');
-        document.getElementById('loanConsultForm').reset(); // 폼 초기화
-    })
-    .catch(error => {
-        // 브라우저 단에서 구글 리다이렉션 응답을 읽지 못해 생기는 허위 에러 패싱 처리
-        alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.');
-        document.getElementById('loanConsultForm').reset();
-        console.error("CORS Redirect Log:", error);
-    })
-    .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "1분 간편 상담 신청하기";
-    });
-});
-</script>
+            fetch(actionUrl, {
+                method: 'POST',
+                body: searchParams,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(function() {
+                alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.');
+                document.getElementById('loanConsultForm').reset();
+            })
+            .catch(function(error) {
+                alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.');
+                document.getElementById('loanConsultForm').reset();
+                console.error("Log:", error);
+            })
+            .finally(function() {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "1분 간편 상담 신청하기";
+            });
+        });
+    </script>
 
 </body>
 </html>
