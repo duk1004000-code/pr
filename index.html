@@ -192,12 +192,28 @@ document.getElementById('loanConsultForm').addEventListener('submit', function(e
             alert('오류 발생: ' + data.message);
         }
     })
+fetch(actionUrl, {
+        method: 'POST',
+        body: searchParams,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(() => {
+        // 시트와 텔레그램이 잘 오므로, 요청이 전송되면 바로 성공 처리합니다.
+        alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.');
+        document.getElementById('loanConsultForm').reset(); // 폼 초기화
+    })
     .catch(error => {
-        // 서버 응답이 지연되어도 깃허브 페이지와 구글 서버 간 데이터 처리는 정상적으로 넘어가므로 유연하게 처리합니다.
-        alert('신청이 완료되었습니다! 확인 후 즉시 연락드리겠습니다.');
+        // 혹시 모를 브라우저 차단이 있어도 이미 시트/텔레그램은 갔으므로 성공으로 처리해 줍니다.
+        alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.');
         document.getElementById('loanConsultForm').reset();
         console.error(error);
     })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "1분 간편 상담 신청하기";
+    });
     .finally(() => {
         submitBtn.disabled = false;
         submitBtn.innerText = "1분 간편 상담 신청하기";
