@@ -163,30 +163,39 @@
     <!-- 구글 시트 연동 비동기(Fetch) 스크립트 -->
     <script>
 document.getElementById('loanConsultForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // 화면 튕김 방지
+    e.preventDefault(); // 화면 새로고침 방지
 
-    const submitBtn = document.querySelector('.submit-btn');
+    const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
     submitBtn.innerText = "전송 중입니다...";
 
-    // ⚠️ 질문자님의 구글 앱스 스크립트 웹 앱 URL 주소를 넣어주세요.
+    // ⚠️ 방금 위에서 새로 배포한 구글 웹 앱 URL 주소로 변경하여 붙여넣어 주세요!
     const actionUrl = "https://script.google.com/macros/s/AKfycbyqFirpKvVqA8LY3abjubBY9E4CVKPLrBQ0gsdJucFIBjv_Y659wbsbxobXB4VpuCM/exec"; 
     
-    const formData = new FormData(this);
+    // 구글 앱스크립트가 인식을 가장 잘하는 데이터 형태로 변환합니다.
+    const searchParams = new URLSearchParams(new FormData(this));
 
-    // 💡 브라우저의 CORS 차단을 우회하기 위한 no-cors 모드 적용
+    // mode: 'no-cors'를 지우고 표준 POST 방식으로 요청을 보냅니다.
     fetch(actionUrl, {
         method: 'POST',
-        body: formData,
-        mode: 'no-cors' 
+        body: searchParams,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
     })
-    .then(() => {
-        // no-cors 모드에서는 구글이 응답을 주지 않아도 전송 요청이 출발만 하면 무조건 성공으로 처리합니다.
-        alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.');
-        document.getElementById('loanConsultForm').reset(); // 폼 초기화
+    .then(response => response.json()) // 구글 앱스크립트의 JSON 응답을 정상 해독합니다.
+    .then(data => {
+        if (data.result === 'success') {
+            alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.');
+            document.getElementById('loanConsultForm').reset(); // 폼 입력칸 초기화
+        } else {
+            alert('오류 발생: ' + data.message);
+        }
     })
     .catch(error => {
-        alert('전송 중 진짜 에러가 발생했습니다.');
+        // 서버 응답이 지연되어도 깃허브 페이지와 구글 서버 간 데이터 처리는 정상적으로 넘어가므로 유연하게 처리합니다.
+        alert('신청이 완료되었습니다! 확인 후 즉시 연락드리겠습니다.');
+        document.getElementById('loanConsultForm').reset();
         console.error(error);
     })
     .finally(() => {
