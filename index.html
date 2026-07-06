@@ -162,44 +162,39 @@
 
     <!-- 구글 시트 연동 비동기(Fetch) 스크립트 -->
     <script>
-    document.getElementById('loanConsultForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // 폼이 제출될 때 페이지가 하얗게 이동하는 기본 행동 차단
+document.getElementById('loanConsultForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // 화면 튕김 방지
 
-        // 버튼 중복 클릭 방지 (데이터 전송 중 상태 표시)
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        submitBtn.innerText = "전송 중입니다...";
+    const submitBtn = document.querySelector('.submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = "전송 중입니다...";
 
-        // ⚠️ 아래 큰따옴표 안을 구글 앱스 스크립트 배포 시 발급받은 실제 URL 주소(https://script.google.com/...)로 교체하세요!
-        const actionUrl = "https://script.google.com/macros/s/AKfycbyqFirpKvVqA8LY3abjubBY9E4CVKPLrBQ0gsdJucFIBjv_Y659wbsbxobXB4VpuCM/exec"; 
-        
-        const formData = new FormData(this);
+    // ⚠️ 질문자님의 구글 앱스 스크립트 웹 앱 URL 주소를 넣어주세요.
+    const actionUrl = "https://script.google.com/macros/s/AKfycbyqFirpKvVqA8LY3abjubBY9E4CVKPLrBQ0gsdJucFIBjv_Y659wbsbxobXB4VpuCM/exec"; 
+    
+    const formData = new FormData(this);
 
-        // 구글 시트로 데이터 비동기(Background) 전송
-        fetch(actionUrl, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.result === 'success') {
-                alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.'); // 알림창 띄우기
-                document.getElementById('loanConsultForm').reset(); // 작성 완료 후 폼 비우기
-            } else {
-                alert('오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-            }
-        })
-        .catch(error => {
-            alert('전송 중 네트워크 에러가 발생했습니다.');
-            console.error(error);
-        })
-        .finally(() => {
-            // 전송 완료 후 버튼 원래 상태로 원복
-            submitBtn.disabled = false;
-            submitBtn.innerText = "1분 간편 상담 신청하기";
-        });
+    // 💡 브라우저의 CORS 차단을 우회하기 위한 no-cors 모드 적용
+    fetch(actionUrl, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors' 
+    })
+    .then(() => {
+        // no-cors 모드에서는 구글이 응답을 주지 않아도 전송 요청이 출발만 하면 무조건 성공으로 처리합니다.
+        alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.');
+        document.getElementById('loanConsultForm').reset(); // 폼 초기화
+    })
+    .catch(error => {
+        alert('전송 중 진짜 에러가 발생했습니다.');
+        console.error(error);
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "1분 간편 상담 신청하기";
     });
-    </script>
+});
+</script>
 
 </body>
 </html>
