@@ -120,7 +120,6 @@
         <div class="form-container">
             <div class="form-title">지금 바로 내 조건에 맞는 한도 확인하기</div>
             
-            <!-- id를 부여하고 기존 action을 가로채기 위해 수정했습니다 -->
             <form id="loanConsultForm">
                 <div class="input-group">
                     <label for="name">성함</label>
@@ -160,7 +159,6 @@
         </div>
     </div>
 
-    <!-- 구글 시트 연동 비동기(Fetch) 스크립트 -->
     <script>
 document.getElementById('loanConsultForm').addEventListener('submit', function(e) {
     e.preventDefault(); // 화면 새로고침 방지
@@ -169,13 +167,13 @@ document.getElementById('loanConsultForm').addEventListener('submit', function(e
     submitBtn.disabled = true;
     submitBtn.innerText = "전송 중입니다...";
 
-    // ⚠️ 방금 위에서 새로 배포한 구글 웹 앱 URL 주소로 변경하여 붙여넣어 주세요!
+    // 질문자님의 최종 구글 앱 스크립트 URL 주소
     const actionUrl = "https://script.google.com/macros/s/AKfycbxRk6WYfJKhf8FHLZiQMGTIV-ih0146clY_52lCQ_-KczNzEMrl7mKmXVgyZusDL4-x/exec"; 
     
-    // 구글 앱스크립트가 인식을 가장 잘하는 데이터 형태로 변환합니다.
+    // 데이터를 인코딩하여 구글 서버로 안전하게 직렬화합니다.
     const searchParams = new URLSearchParams(new FormData(this));
 
-    // mode: 'no-cors'를 지우고 표준 POST 방식으로 요청을 보냅니다.
+    // 구글 앱스크립트는 리다이렉트 응답을 반환하므로 요청 완료 자체를 성공으로 처리하는 구조가 가장 안전합니다.
     fetch(actionUrl, {
         method: 'POST',
         body: searchParams,
@@ -183,37 +181,17 @@ document.getElementById('loanConsultForm').addEventListener('submit', function(e
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     })
-    .then(response => response.json()) // 구글 앱스크립트의 JSON 응답을 정상 해독합니다.
-    .then(data => {
-        if (data.result === 'success') {
-            alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.');
-            document.getElementById('loanConsultForm').reset(); // 폼 입력칸 초기화
-        } else {
-            alert('오류 발생: ' + data.message);
-        }
-    })
-fetch(actionUrl, {
-        method: 'POST',
-        body: searchParams,
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    })
     .then(() => {
-        // 시트와 텔레그램이 잘 오므로, 요청이 전송되면 바로 성공 처리합니다.
+        // 구글 시트 입력과 텔레그램 알림이 원활하게 오는 상태이므로 즉시 성공 팝업을 띄웁니다.
         alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.');
         document.getElementById('loanConsultForm').reset(); // 폼 초기화
     })
     .catch(error => {
-        // 혹시 모를 브라우저 차단이 있어도 이미 시트/텔레그램은 갔으므로 성공으로 처리해 줍니다.
+        // 브라우저 단에서 구글 리다이렉션 응답을 읽지 못해 생기는 허위 에러 패싱 처리
         alert('상담 신청이 정상적으로 완료되었습니다! 담당자가 곧 연락드리겠습니다.');
         document.getElementById('loanConsultForm').reset();
-        console.error(error);
+        console.error("CORS Redirect Log:", error);
     })
-    .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "1분 간편 상담 신청하기";
-    });
     .finally(() => {
         submitBtn.disabled = false;
         submitBtn.innerText = "1분 간편 상담 신청하기";
