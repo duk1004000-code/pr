@@ -3,171 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>대출 한도 및 금리 무료 상담</title>
+    <title>무료 대출 상담 신청</title>
     <style>
-        * {
-            box-sizing: border-box;
+        /* 기본 스타일 리셋 및 배경 설정 */
+        body {
             margin: 0;
             padding: 0;
             font-family: 'Noto Sans KR', sans-serif;
-        }
-
-        body {
-            background-color: #f4f6fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        /* 랜딩페이지 전체 컨테이너 (9:16 모바일 비율 타겟) */
-        .landing-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px; /* 모바일 최적화 해상도 */
-            background-image: url('pr.png'); /* 방금 만든 파란색 배경 이미지 파일명 */
-            background-size: cover;
-            background-position: center;
-            aspect-ratio: 9 / 16;
+            background-color: #f4f7ff;
+            color: #333;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end; /* 입력창을 하단 빈 공간으로 배치 */
-            padding: 30px 20px 40px 20px;
+            align-items: center;
         }
 
-        /* 입력 폼 컨테이너 (토스/카뱅 스타일의 깔끔한 흰색 박스) */
-        .form-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 24px 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        /* 메인 컨테이너 영역 */
+        .container {
             width: 100%;
+            max-width: 600px; /* 이미지 및 폼 너비 제한 */
+            background-color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
-        /* 2열 배치를 위한 그리드 시스템 */
-        .input-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
+        /* 상단 이미지 영역 */
+        .landing-img {
+            width: 100%;
+            display: block;
+        }
+
+        /* 입력 폼 컨테이너 */
+        .form-container {
+            padding: 40px 30px;
+            background: linear-gradient(180deg, #ffffff 0%, #edf2ff 100%);
+        }
+
+        .form-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2b44ff;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* 입력 필드 그룹 */
+        .input-group {
             margin-bottom: 20px;
         }
 
-        /* 모바일에서 세로로 길게 보고 싶다면 아래 주석을 해제하세요 */
-        /* @media (max-width: 400px) {
-            .input-grid { grid-template-columns: 1fr; }
-        } */
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-        }
-
         .input-group label {
-            font-size: 13px;
+            display: block;
+            font-size: 14px;
             font-weight: 600;
-            color: #4e5968; /* 토스풍 짙은 그레이 */
-            margin-bottom: 6px;
-            padding-left: 2px;
+            color: #4e5968;
+            margin-bottom: 8px;
         }
 
-        .input-group input, .input-group select {
+        .input-group input, 
+        .input-group select {
             width: 100%;
-            height: 48px;
-            background-color: #f2f4f6;
-            border: 1px solid transparent;
-            border-radius: 12px;
-            padding: 0 16px;
+            padding: 14px;
             font-size: 15px;
-            color: #191f28;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-sizing: border-box;
             outline: none;
-            transition: all 0.2s ease;
+            transition: border-color 0.2s;
         }
 
-        /* 입력창에 마우스 클릭/포커스 되었을 때 금융앱 스타일의 블루 테두리 */
-        .input-group input:focus, .input-group select:focus {
-            background-color: #ffffff;
-            border-color: #3182f6; /* 신뢰감을 주는 리치 블루 */
-            box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.12);
+        .input-group input:focus, 
+        .input-group select:focus {
+            border-color: #2b44ff;
+            box-shadow: 0 0 0 3px rgba(43, 68, 255, 0.1);
         }
 
-        /* 금융 스타일의 꽉 찬 버튼 */
+        /* 개인정보 동의 약관 (선택 사항이지만 금융 상담엔 필수) */
+        .agreement-group {
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .agreement-group input {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        /* 신청하기 버튼 */
         .submit-btn {
             width: 100%;
-            height: 54px;
-            background-color: #3182f6;
+            padding: 16px;
+            background: linear-gradient(90deg, #4d64ff, #2b44ff);
             color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
             border: none;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s ease;
-            box-shadow: 0 4px 12px rgba(49, 130, 246, 0.2);
+            box-shadow: 0 4px 10px rgba(43, 68, 255, 0.3);
+            transition: opacity 0.2s;
         }
 
         .submit-btn:hover {
-            background-color: #1b64da;
-        }
-
-        /* 하단 개인정보 보호 안내 문구 */
-        .privacy-notice {
-            text-align: center;
-            font-size: 11px;
-            color: #8b95a1;
-            margin-top: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 4px;
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
 
-    <div class="landing-container">
-        <!-- SheetMonkey(시트몽키) 연동을 위한 form 태그 -->
-        <form action="여기에_시트몽키_주소를_넣으세요" method="POST" class="form-container">
+    <div class="container">
+        <img src="pr.png" alt="대출 한도 금리 무료 상담" class="landing-img">
+
+        <div class="form-container">
+            <div class="form-title">지금 바로 내 조건에 맞는 한도 확인하기</div>
             
-            <div class="input-grid">
-                <!-- 1. 성함 -->
+            <form action="#" method="POST">
                 <div class="input-group">
                     <label for="name">성함</label>
-                    <input type="text" id="name" name="성함" placeholder="홍길동" required>
-                </div>
-                
-                <!-- 2. 전화번호 -->
-                <div class="input-group">
-                    <label for="phone">전화번호</label>
-                    <input type="tel" id="phone" name="전화번호" placeholder="010-1234-5678" required>
+                    <input type="text" id="name" name="name" placeholder="홍길동" required>
                 </div>
 
-                <!-- 3. 직업 (선택형 드롭다운으로 세련되게 처리) -->
+                <div class="input-group">
+                    <label for="phone">전화번호</label>
+                    <input type="tel" id="phone" name="phone" placeholder="010-1234-5678" required>
+                </div>
+
                 <div class="input-group">
                     <label for="job">직업군</label>
-                    <select id="job" name="직업" required>
-                        <option value="" disabled selected>선택해 주세요</option>
-                        <option value="직장인">직장인 (4대보험)</option>
-                        <option value="사업자">개인 사업자</option>
-                        <option value="프리랜서">프리랜서 / 3.3%</option>
-                        <option value="주부/무직">주부 / 기타</option>
+                    <select id="job" name="job" required>
+                        <option value="" disabled selected>직업을 선택해주세요</option>
+                        <option value="직장인">직장인 (4대보험 가입)</option>
+                        <option value="직장인_미가입">직장인 (4대보험 미가입)</option>
+                        <option value="사업자">개인 사업자 / 법인 대표</option>
+                        <option value="프리랜서">프리랜서 / 3.3% 원천징수</option>
+                        <option value="주부">전업주부</option>
+                        <option value="기타">기타 / 무직</option>
                     </select>
                 </div>
 
-                <!-- 4. 필요금액 -->
                 <div class="input-group">
-                    <label for="amount">필요 금액</label>
-                    <input type="text" id="amount" name="필요금액" placeholder="예: 500만원" required>
+                    <label for="amount">희망금액</label>
+                    <input type="text" id="amount" name="amount" placeholder="예: 5,000만원 또는 500" required>
                 </div>
-            </div>
 
-            <!-- 제출 버튼 -->
-            <button type="submit" class="submit-btn">무료 한도 조회하기</button>
+                <div class="agreement-group">
+                    <input type="checkbox" id="agree" required>
+                    <label for="agree">[필수] 무료 상담을 위한 개인정보 수집 및 이용에 동의합니다.</label>
+                </div>
 
-            <!-- 안심 보안 안내 -->
-            <div class="privacy-notice">
-                🔒 개인정보는 한도 조회 목적으로만 이용되며 안전하게 보호됩니다.
-            </div>
-        </form>
+                <button type="submit" class="submit-btn">1분 간편 상담 신청하기</button>
+            </form>
+        </div>
     </div>
 
 </body>
